@@ -19,3 +19,7 @@ infosys.beckhoff.de
 - IP Adresse kontrollieren
 - cmd -> ipconfig 
 - cmd -> ping 192.168.1.xx
+
+## Inbetriebnahme
+Freerun modus? -> Ja
+-> HW testen
