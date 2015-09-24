@@ -1,5 +1,9 @@
 ilias/
 ilias_copy/
 *.ri
-PLC-Prog/FirstProg.tpy
 *.ci
+*.tpa
+*.SYM
+*.ASD
+*.SDB
+*.tpy
