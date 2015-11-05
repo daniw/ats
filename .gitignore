@@ -1,5 +1,8 @@
 ilias/
 ilias_copy/
+
+*.swp
+
 *.ri
 *.ci
 *.tpa
@@ -9,3 +12,6 @@ ilias_copy/
 *.tpy
 *.bak
 *.BAK
+
+*.mexa64
+stateflow/slprj
