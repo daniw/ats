@@ -1,0 +1,148 @@
+
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+FUNCTION_BLOCK EdgeDetector
+VAR_INPUT
+	inputValue : BOOL;
+END_VAR
+VAR_OUTPUT
+	risingEdge : BOOL;
+	fallingEdge : BOOL;
+END_VAR
+VAR
+	prev : BOOL := FALSE;
+END_VAR
+(* @END_DECLARATION := '0' *)
+IF inputValue > prev THEN
+	risingEdge := TRUE;
+	fallingEdge := FALSE;
+ELSIF inputValue < prev THEN
+	risingEdge := FALSE;
+	fallingEdge := TRUE;
+ELSE
+	risingEdge := FALSE;
+	fallingEdge := FALSE;
+END_IF
+prev := inputValue;
+END_FUNCTION_BLOCK
+
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+FUNCTION_BLOCK EdgeDetectorDouble
+VAR_INPUT
+	inputValue : BOOL;
+	threshold : INT;
+END_VAR
+VAR_OUTPUT
+	risingEdge : BOOL;
+	fallingEdge : BOOL;
+	double : BOOL;
+END_VAR
+VAR
+	prev : BOOL := FALSE;
+	timer : INT := 0;
+END_VAR
+(* @END_DECLARATION := '0' *)
+IF inputValue > prev THEN
+	risingEdge := TRUE;
+	fallingEdge := FALSE;
+	IF timer < threshold THEN
+		double := TRUE;
+	ELSE
+		double := FALSE;
+	END_IF
+	timer := 0;
+ELSIF inputValue < prev THEN
+	risingEdge := FALSE;
+	fallingEdge := TRUE;
+	IF timer < 32767 THEN
+		timer := timer + 1;
+	END_IF
+	double := FALSE;
+ELSE
+	risingEdge := FALSE;
+	fallingEdge := FALSE;
+	IF timer < 32767 THEN
+		timer := timer + 1;
+	END_IF
+	double := FALSE;
+END_IF
+prev := inputValue;
+END_FUNCTION_BLOCK
+
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+FUNCTION PwmSignal : REAL
+VAR_INPUT
+	a : REAL;
+	offset : REAL;
+	w : REAL;
+	t : INT;
+	duty : REAL;
+END_VAR
+VAR
+	per : INT;
+END_VAR
+(* @END_DECLARATION := '0' *)
+per := REAL_TO_INT(F_TASK / w);
+IF duty*per >= per THEN
+	PwmSignal := offset + a;
+ELSIF duty*per <=0 THEN
+	PwmSignal := offset - a;
+ELSIF (t MOD per) < duty*per THEN
+	PwmSignal := offset + a;
+ELSE
+	PwmSignal := offset - a;
+END_IF
+END_FUNCTION
+
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+FUNCTION SinusFunction : REAL
+VAR_INPUT
+	a : REAL;
+	offset : REAL;
+	w : REAL;
+	t : INT;
+END_VAR
+VAR
+END_VAR
+(* @END_DECLARATION := '0' *)
+SinusFunction := a * SIN(INT_TO_REAL(t)*w /F_TASK *2.0*3.1415) + offset;
+END_FUNCTION
+
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+FUNCTION SquareSignal : REAL
+VAR_INPUT
+	a : REAL;
+	offset : REAL;
+	w : REAL;
+	t : INT;
+END_VAR
+VAR
+	per : INT;
+END_VAR
+(* @END_DECLARATION := '0' *)
+per := REAL_TO_INT(F_TASK / w);
+IF (t MOD per) < (per / 2) THEN
+	SquareSignal := offset + a;
+ELSE
+	SquareSignal := offset - a;
+END_IF
+END_FUNCTION
