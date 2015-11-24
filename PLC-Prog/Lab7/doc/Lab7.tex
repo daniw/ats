@@ -1,0 +1,59 @@
+\documentclass[a4,paper,fleqn]{article}
+
+\usepackage{layout}
+
+
+\title{Automatisierungstechnik -- Labor Aufgabenserie 7}
+\date{\today}
+\author{Yves Studer\\Daniel Winz}
+
+\begin{document}
+\maketitle
+\clearpage
+\section{Diskretisierung Regler}
+Der Ausgang setzt sich aus den Anteilen $U_p$, $U_i$ und $U_d$ zusammen. 
+\[ U[k] = U_p[k] + U_i[k] + U_d[k] \]
+
+\subsection{P Anteil}
+\[ H_p(s) = K_p \]
+\[ H_p(z) = K_p \]
+\[ U_p[k] = E_p[k] \cdot K_p \]
+
+\subsection{I Anteil}
+\[ H_i(s) = \frac{1}{K_i \cdot s} \]
+Trapezregel
+\[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \]
+\[ H_i(z) = \frac{K_p}{T_i \cdot \dfrac{2}{T} \cdot \dfrac{z - 1}{z + 1}}
+ = \frac{K_p \cdot T \cdot (z + 1)}{T_i \cdot 2 \cdot (z - 1)}
+ = \frac{K_p \cdot T \cdot z + K_p \cdot T}{T_i \cdot 2 \cdot z - T_i \cdot 2}
+ = \frac{K_p \cdot T + K_p \cdot T \cdot z^{-1}}{T_i \cdot 2 - T_i \cdot 2 \cdot z^{-1}}
+ = \frac{U_i(z)}{E(z)} \]
+\[ U_i(z) \cdot (T_i \cdot 2 - T_i \cdot 2 \cdot z^{-1})
+ = E(z) \cdot (K_p \cdot T + K_p \cdot T \cdot z^{-1}) \]
+\[ U_i[k] =  U_i[k-1] + \left(E[k] + E[k-1]\right) \cdot
+ \underbrace{\frac{K_p \cdot T}{2 \cdot T_i}}_{K_i} \]
+
+\subsection{I Anteil mit Anti-Reset Windup}
+Rechnung gleich wie Ohne ARW
+\[ U_i[k] =  U_i[k-1] + \left(E[k] + E[k-1]\right) \cdot
+ \underbrace{\frac{K_p \cdot T}{2 \cdot T_i}}_{K_i}
+ + \left(U_{Sat}[k] - U[k] + U_{Sat}[k-1] - U[k-1]\right) \cdot
+ \underbrace{\frac{K_p \cdot T}{2 \cdot T_i}}_{K_i} \]
+
+\subsection{D Anteil}
+\[ H_d(s) = - \frac{T_d \cdot s}{\dfrac{T_d}{N} \cdot s + 1} \]
+Rückwärtsrechteckregel
+\[ s = \frac{z - 1}{t \cdot z} \]
+\[ H_d(z) = -\frac{T_d \cdot \dfrac{z - 1}{t \cdot z}}{\dfrac{T_d}{N} \cdot \dfrac{z - 1}{t \cdot z} + 1}
+ = -\frac{T_d \cdot N \cdot (z - 1)}{T_d \cdot (z - 1) + N \cdot t \cdot z}
+ = -\frac{T_d \cdot N \cdot z - T_d \cdot N}{T_d \cdot z + N \cdot t \cdot z - T_d} \]
+\[ H_d(z) = -\frac{T_d \cdot N - T_d \cdot N \cdot z^{-1}}{T_d + N \cdot t - T_d \cdot z^{-1}}
+ = \frac{U_d(z)}{E(z)} \]
+\[ U_d(z) \cdot (T_d + N \cdot t - T_d \cdot z^{-1})
+ = - E(z) \cdot (T_d \cdot N - T_d \cdot N \cdot z^{-1}) \]
+\[ U_d[k] = U_d[k-1] \cdot \frac{T_d}{T_d + N \cdot t}
+ - \left(E[k] - E[k-1]\right) \cdot \frac{T_d}{T_d + N \cdot t} \cdot N \]
+\[ U_d[k] = \underbrace{\frac{1}{1 + \dfrac{N \cdot t}{T_d}}}_{K_d} \cdot \left(U_d[k-1]
+ - \left(E[k] - E[k-1]\right) \cdot N\right) \]
+
+\end{document}

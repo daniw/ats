@@ -15,3 +15,13 @@ ilias_copy/
 
 *.mexa64
 stateflow/slprj
+
+*.aux
+*.lof
+*.log
+*.lol
+*.lot
+*.out
+*.toc
+
+PLC-Prog/Lab7/doc/Lab7.pdf
