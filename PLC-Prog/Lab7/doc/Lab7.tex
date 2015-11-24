@@ -56,4 +56,72 @@ Rückwärtsrechteckregel
 \[ U_d[k] = \underbrace{\frac{1}{1 + \dfrac{N \cdot t}{T_d}}}_{K_d} \cdot \left(U_d[k-1]
  - \left(E[k] - E[k-1]\right) \cdot N\right) \]
 
+\section{Implementierung}
+\lstsettingst
+\begin{lstlisting}
+FUNCTION_BLOCK PID
+VAR_INPUT
+	input_e : REAL;
+	input_y : REAL;
+	param : PID_Parameter_Struct;
+	modus : System_Modus_Enum;
+END_VAR
+
+VAR_OUTPUT
+	out: REAL;
+END_VAR
+
+VAR
+	p : REAL;
+	i : REAL;
+	d : REAL;
+	Ki : REAL;
+	Kd : REAL;
+	Kr : REAL;
+	input_e_z1 : REAL;
+	input_y_z1 : REAL;
+	i_z1 : REAL;
+	d_z1 : REAL;
+	out_z1_sat : REAL;
+	out_arw : REAL;
+	out_arw_z1 : REAL;
+	out_z1 : REAL;
+END_VAR
+
+CASE modus OF
+System_init:
+	Ki := param.Kp * PERIOD / (2 * param.Ti);
+	Kd := 1 / (1 + (param.N * PERIOD) / (param.Td));
+	Kr := PERIOD / (param.Tr * 2);
+
+System_run:
+	p := input_e * param.Kp;
+	IF param.ARW = 0 THEN
+		(* No anti-reset windup *)
+		i   := i_z1 + Ki * (input_e + input_e_z1);
+	ELSE
+		(* anti-reset windup enabled *)
+		IF out_z1 > param.Umax THEN
+			out_z1_sat := param.Umax;
+		ELSIF out_z1 > param.Umax THEN
+			out_z1_sat := param.Umin;
+		ELSE
+			out_z1_sat := out_z1;
+		END_IF
+		out_arw := out_z1_sat - out_z1;
+		i := i_z1 + Ki * (input_e + input_e_z1) + Kr * (out_arw + out_arw_z1);
+	END_IF;
+	d := Kd * (d_z1 - (input_y - input_y_z1) * param.N);
+
+	out := p + i + d;
+
+	input_e_z1 := input_e;
+	input_y_z1 := input_y;
+	i_z1 := i;
+	d_z1 := d;
+	out_arw_z1 := out_arw;
+	out_z1 := out;
+END_CASE
+\end{lstlisting}
+
 \end{document}
