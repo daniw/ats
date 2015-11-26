@@ -20,7 +20,7 @@ Der Ausgang setzt sich aus den Anteilen $U_p$, $U_i$ und $U_d$ zusammen.
 \[ U_p[k] = E_p[k] \cdot K_p \]
 
 \subsection{I Anteil}
-\[ H_i(s) = \frac{1}{K_i \cdot s} \]
+\[ H_i(s) = \frac{K_p}{T_i \cdot s} \]
 Trapezregel
 \[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \]
 \[ H_i(z) = \frac{K_p}{T_i \cdot \dfrac{2}{T} \cdot \dfrac{z - 1}{z + 1}}
@@ -34,11 +34,11 @@ Trapezregel
  \underbrace{\frac{K_p \cdot T}{2 \cdot T_i}}_{K_i} \]
 
 \subsection{I Anteil mit Anti-Reset Windup}
-Rechnung gleich wie Ohne ARW
+Rechnung gleich wie ohne ARW
 \[ U_i[k] =  U_i[k-1] + \left(E[k] + E[k-1]\right) \cdot
  \underbrace{\frac{K_p \cdot T}{2 \cdot T_i}}_{K_i}
  + \left(U_{Sat}[k] - U[k] + U_{Sat}[k-1] - U[k-1]\right) \cdot
- \underbrace{\frac{K_p \cdot T}{2 \cdot T_i}}_{K_i} \]
+ \underbrace{\frac{T}{2 \cdot T_r}}_{K_r} \]
 
 \subsection{D Anteil}
 \[ H_d(s) = - \frac{T_d \cdot s}{\dfrac{T_d}{N} \cdot s + 1} \]
